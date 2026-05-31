@@ -2,7 +2,11 @@
 //
 
 #include <stdio.h>
-#include <windows.h>    
+#include <windows.h>   
+
+int SaveBitMapToFile(HBITMAP hBitMap, cnst char* filename) {
+
+}
 
 int main()
 {
@@ -34,8 +38,6 @@ int main()
 	DeleteDC(hMemoryDC);
 	ReleaseDC(NULL, hScreenDC);
 
-
-	printf("Taking screenshot...\n");
     return 0;
 }
 
