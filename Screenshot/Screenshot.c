@@ -7,9 +7,12 @@
 int main()
 {
     printf("Hello World\n");
-    int x = 0;
-	int y = 0;
-	int z = 0;
+	int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+	int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+	int w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+	int h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+
+	HDC hScreenDC = GetDC(NULL);
 	printf("Taking screenshot...\n");
     return 0;
 }
