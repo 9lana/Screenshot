@@ -2,10 +2,15 @@
 //
 
 #include <stdio.h>
+#include <windows.h>    
 
 int main()
 {
     printf("Hello World\n");
+    int x = 0;
+	int y = 0;
+	int z = 0;
+	printf("Taking screenshot...\n");
     return 0;
 }
 
