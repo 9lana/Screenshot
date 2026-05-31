@@ -4,7 +4,38 @@
 #include <stdio.h>
 #include <windows.h>   
 
-int SaveBitMapToFile(HBITMAP hBitMap, cnst char* filename) {
+int SaveBitMapToFile(HBITMAP hBitMap, cnst char* filePath) {
+	BITMAP bmp;
+	BITMAPFILEHEADE bfh;
+	BITMAPINFOHEADER bih;
+	BITMAPINFO bi;
+	HDC hDC;
+	char* lpBits;
+
+	hDc = GetDC(NULL);
+	GetObject(hBitMap, sizeof(BITMAP), &bmp);	
+	bih.biSize = sizeof(BITMAPINFOHEADER);
+	bih.biWidth = bmp.bmWidth;
+	bih.biHeight = bmp.bmHeight;	
+	bih.biPlanes = 1;
+	bih.biBitCount = 32;	
+	bih.biCoolmpression = BI_RGB;
+	bih.biSizeImage = 0;
+	bih.biXPelsPerMeter = 0;
+	bih.biYPelsPerMeter = 0;
+	bih.biClrUsed = 0;
+	bih.biClrImportant = 0;
+
+	DWORD dwBmpSize = ((bmp.bmWidth * bih.biBitCount + 31) / 32) * 4 * bmp.bmHeight;
+	HANDLE hBmFile = CreateFileA(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, NULL);
+	lpbits = (char*)malloc(dwBmpSize);
+
+	Getdibits(hDC, hBitMap, 0, (UINT)bmp.bmHeight, lpBits, (BITMAPINFO*)&bih, DIB_RGB_COLORS);
+	bhf.type = 0x4D42;
+	bhf.size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwBmpSize;
+	bhf.reserved1 = 0;
+	bhf.reserved2 = 0;
+	bhf.offBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
 
 }
 
@@ -17,7 +48,7 @@ int main()
 	int h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
 	HDC hScreenDC = GetDC(NULL);
-	HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
+	HDC hMemoryDC = CreateCompatibleDC(hScreenDC);	
 
 	HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC, w, h);
 	HGDIOBJ holdBitmap = SelectObject(hMemoryDC, hBitmap);
