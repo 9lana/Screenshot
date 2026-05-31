@@ -1,42 +1,54 @@
 // Screenshot.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <stdio.h>
-#include <windows.h>   
+#include <windows.h>  
+#include <stdlib.h>
 
-int SaveBitMapToFile(HBITMAP hBitMap, cnst char* filePath) {
-	BITMAP bmp;
-	BITMAPFILEHEADE bfh;
-	BITMAPINFOHEADER bih;
-	BITMAPINFO bi;
-	HDC hDC;
-	char* lpBits;
+int SaveBitMapToFile(HBITMAP hBitMap, const char* filePath) {
+    BITMAP bmp;
+    BITMAPFILEHEADER bfh;
+    BITMAPINFOHEADER bih;
+  
+    HDC hDC;
+    char* lpBits;
 
-	hDc = GetDC(NULL);
-	GetObject(hBitMap, sizeof(BITMAP), &bmp);	
-	bih.biSize = sizeof(BITMAPINFOHEADER);
-	bih.biWidth = bmp.bmWidth;
-	bih.biHeight = bmp.bmHeight;	
-	bih.biPlanes = 1;
-	bih.biBitCount = 32;	
-	bih.biCoolmpression = BI_RGB;
-	bih.biSizeImage = 0;
-	bih.biXPelsPerMeter = 0;
-	bih.biYPelsPerMeter = 0;
-	bih.biClrUsed = 0;
-	bih.biClrImportant = 0;
+    hDC = GetDC(NULL);
+    GetObject(hBitMap, sizeof(BITMAP), &bmp);	
+    bih.biSize = sizeof(BITMAPINFOHEADER);
+    bih.biWidth = bmp.bmWidth;
+    bih.biHeight = bmp.bmHeight;	
+    bih.biPlanes = 1;
+    bih.biBitCount = 32;	
+    bih.biCompression = BI_RGB;
+        bih.biSizeImage = 0;
+        bih.biXPelsPerMeter = 0;
+        bih.biYPelsPerMeter = 0;
+    bih.biClrUsed = 0;
+    bih.biClrImportant = 0;
 
-	DWORD dwBmpSize = ((bmp.bmWidth * bih.biBitCount + 31) / 32) * 4 * bmp.bmHeight;
-	HANDLE hBmFile = CreateFileA(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, NULL);
-	lpbits = (char*)malloc(dwBmpSize);
+    DWORD dwBmpSize = ((bmp.bmWidth * bih.biBitCount + 31) / 32) * 4 * bmp.bmHeight;
+    HANDLE hBmFile = CreateFileA(filePath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, NULL);
+    lpBits = (char*)malloc(dwBmpSize);
 
-	Getdibits(hDC, hBitMap, 0, (UINT)bmp.bmHeight, lpBits, (BITMAPINFO*)&bih, DIB_RGB_COLORS);
-	bhf.type = 0x4D42;
-	bhf.size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwBmpSize;
-	bhf.reserved1 = 0;
-	bhf.reserved2 = 0;
-	bhf.offBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+    GetDIBits(hDC, hBitMap, 0, (UINT)bmp.bmHeight, lpBits, (BITMAPINFO*)&bih, DIB_RGB_COLORS);
+    bfh.bfType = 0x4D42;
+    bfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwBmpSize;
+    bfh.bfReserved1 = 0;
+    bfh.bfReserved2 = 0;
+    bfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
 
+    DWORD dwWritten = 0;
+    WriteFile(hBmFile, &bfh, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
+    WriteFile(hBmFile, &bih, sizeof(BITMAPINFOHEADER), &dwWritten, NULL);
+    WriteFile(hBmFile, lpBits, dwBmpSize, &dwWritten, NULL);
+
+    CloseHandle(hBmFile);
+    free(lpBits);
+    ReleaseDC(NULL, hDC);	
+    return 0;
 }
 
 int main()
@@ -54,17 +66,17 @@ int main()
 	HGDIOBJ holdBitmap = SelectObject(hMemoryDC, hBitmap);
 
 	printf("Capturing screen...\n");
-	BitBlt(hmemoryDC, 0, 0, w, h, hScreenDC, x, y, SRCCOPY);
+	BitBlt(hMemoryDC, 0, 0, w, h, hScreenDC, x, y, SRCCOPY);
 
 	char filename[MAX_PATH];
 	char* desktopPath = getenv("USERPROFILE");
-	snprintf(filename, sizeof(filename), "%s\\Desktop\\Screenshots\\capture.bmp");
+	snprintf(filename, sizeof(filename), "%s\\Desktop\\Screenshots\\capture.bmp", desktopPath);
 
 	char fullPath[MAX_PATH];
 	snprintf(fullPath, sizeof(fullPath), "mkdir \"%s\\Desktop\\Screenshots\"", desktopPath);
 	system(fullPath);
 
-	selectObject(hMemoryDC, holdBitmap);
+	SelectObject(hMemoryDC, holdBitmap);
 	DeleteObject(hBitmap);
 	DeleteDC(hMemoryDC);
 	ReleaseDC(NULL, hScreenDC);
