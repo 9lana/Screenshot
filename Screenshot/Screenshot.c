@@ -13,6 +13,28 @@ int main()
 	int h = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
 	HDC hScreenDC = GetDC(NULL);
+	HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
+
+	HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC, w, h);
+	HGDIOBJ holdBitmap = SelectObject(hMemoryDC, hBitmap);
+
+	printf("Capturing screen...\n");
+	BitBlt(hmemoryDC, 0, 0, w, h, hScreenDC, x, y, SRCCOPY);
+
+	char filename[MAX_PATH];
+	char* desktopPath = getenv("USERPROFILE");
+	snprintf(filename, sizeof(filename), "%s\\Desktop\\Screenshots\\capture.bmp");
+
+	char fullPath[MAX_PATH];
+	snprintf(fullPath, sizeof(fullPath), "mkdir \"%s\\Desktop\\Screenshots\"", desktopPath);
+	system(fullPath);
+
+	selectObject(hMemoryDC, holdBitmap);
+	DeleteObject(hBitmap);
+	DeleteDC(hMemoryDC);
+	ReleaseDC(NULL, hScreenDC);
+
+
 	printf("Taking screenshot...\n");
     return 0;
 }
