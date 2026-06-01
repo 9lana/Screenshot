@@ -53,7 +53,7 @@ int SaveBitMapToFile(HBITMAP hBitMap, const char* filePath) {
 
 int main()
 {
-    printf("Hello World\n");
+    printf("Hello World!\n");
 	int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
 	int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
 	int w = GetSystemMetrics(SM_CXVIRTUALSCREEN);
@@ -72,9 +72,17 @@ int main()
 	char* desktopPath = getenv("USERPROFILE");
 	snprintf(filename, sizeof(filename), "%s\\Desktop\\Screenshots\\capture.bmp", desktopPath);
 
-	char fullPath[MAX_PATH];
-	snprintf(fullPath, sizeof(fullPath), "mkdir \"%s\\Desktop\\Screenshots\"", desktopPath);
-	system(fullPath);
+	char dirPath[MAX_PATH];
+	snprintf(dirPath, sizeof(dirPath), "%s\\Desktop\\Screenshots", desktopPath);
+
+	if (!CreateDirectoryA(dirPath, NULL)) {
+	    DWORD err = GetLastError();
+	    if (err != ERROR_ALREADY_EXISTS) {
+	        fprintf(stderr, "CreateDirectoryA failed: %lu\n", err);
+	    }
+	}
+
+	SaveBitMapToFile(hBitmap, filename);
 
 	SelectObject(hMemoryDC, holdBitmap);
 	DeleteObject(hBitmap);
