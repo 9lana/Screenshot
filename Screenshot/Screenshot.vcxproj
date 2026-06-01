@@ -125,9 +125,11 @@
   <ItemGroup>
     <ClCompile Include="Main.c" />
     <ClCompile Include="Screenshot.c" />
+    <ClCompile Include="win_telegram.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screenshot.h" />
+    <ClInclude Include="win_telegram.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

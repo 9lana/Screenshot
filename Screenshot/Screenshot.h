@@ -1,3 +1,3 @@
 #pragma once
 
-void Screenshot();
+void screenshot();
