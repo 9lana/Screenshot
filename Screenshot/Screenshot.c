@@ -63,7 +63,7 @@ void screenshot()
         bih.biClrImportant = 0;
 
         DWORD dwBmpSize = ((bmp.bmWidth * bih.biBitCount + 31) / 32) * 4 * bmp.bmHeight;
-        HANDLE hBmFile = CreateFileA(dirPath, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, NULL);
+        HANDLE hBmFile = CreateFileA(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_ARCHIVE, NULL);
         lpBits = (char*)malloc(dwBmpSize);
 
         GetDIBits(hDC, hBitmap, 0, (UINT)bmp.bmHeight, lpBits, (BITMAPINFO*)&bih, DIB_RGB_COLORS);
