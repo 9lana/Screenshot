@@ -101,7 +101,7 @@ int send_telegram_file(const char* file_path) {
 		free(fileBuffer);
 		return -1;
 	}
-	HINTERNET hConnect = InternetConnectA(hSession, "api.telegeam.org", INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
+	HINTERNET hConnect = InternetConnectA(hSession, "api.telegram.org", INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0);
 	if (!hConnect) {
 		InternetCloseHandle(hSession);
 		free(fileBuffer);
